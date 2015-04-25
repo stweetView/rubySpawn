@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gem 'pg'
 
 # Sinatra driver
-gem 'rack', '1.5.2'
+gem 'rack'
 gem 'sinatra'
 gem 'sinatra-contrib'
 

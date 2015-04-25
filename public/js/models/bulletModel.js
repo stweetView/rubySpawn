@@ -29,7 +29,7 @@ Bullet.prototype.setDivPosition = function(){
 
 Bullet.prototype.generateBullet = function(){
 
-  var $div = $("<div class='bullet'><img class='ruby' src='./public/images/ruby.png'></div>").attr('id', "bullet"+this.id);
+  var $div = $("<div class='bullet'><img class='ruby' src='./images/ruby.png'></div>").attr('id', "bullet"+this.id);
   this.$div = $div;
   this.setDivPosition();
   return $div;

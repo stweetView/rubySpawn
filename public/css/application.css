@@ -1,0 +1,20 @@
+html, body {
+  min-height: 100%;
+}
+
+.bullet {
+  max-width: 15px;
+  min-height: 15px;
+  position: absolute;
+  -webkit-animation: spin 1s infinite linear;
+}
+
+.ruby {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+@-webkit-keyframes spin {
+    from {-webkit-transform:rotate(0deg);}
+    to {-webkit-transform:rotate(360deg);}
+}

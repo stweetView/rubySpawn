@@ -1,6 +1,10 @@
+require ::File.expand_path('../config/environment',  __FILE__)
 require 'rubygems'
 require 'tweetstream'
 require 'dotenv'
+require 'pg'
+require 'active_record'
+require 'logger'
 Dotenv.load
 
 TweetStream.configure do |config|
@@ -27,6 +31,9 @@ TweetStream::Client.new.track('#ruby') do |status|
     #   'profile_image_url' => status.user.profile_image_url,
     #   'received_at' => Time.new.to_i
     # )
+    puts Tweet.all
     puts "Got tweet #{status.text}"
+    
+    tweet = Tweet.create(text: status.text, user_name: status.user.name, profile_image_url: status.user.profile_image_url)
   end
 end

@@ -2,21 +2,31 @@ $(document).ready(function() {
 
 	var bulletController = new BulletController();
 	view = new View();
-
-	$.ajax({
-	  url: "/tweets",
-	  method: "POST",
-	  data: {time: new Date().getTime()}
-	}).done(function(data) {
-	  console.log(data);
-	});
+	var timeOfLastRequest = new Date();
 
 	var randomVictor = function(){
-		return new Victor(Math.random(), Math.random())
+		return new Victor(Math.random() - 0.5, Math.random() - 0.5);
 	};
 
 	setInterval(function(){
-		bulletController.shootBullet(randomVictor().multiply(1000), randomVictor())
-	}, 300);
+
+		$.ajax({
+		  url: "/tweets",
+		  method: "POST",
+		  dataType: "json",
+		  data: {timeOfLastRequest: timeOfLastRequest.getTime() }
+		}).done(function(data) {
+
+		  timeOfLastRequest = new Date(data.time);
+		  for(var i=0; i < data.count; i++){
+
+		  	var bigVictor = new Victor(Math.random(), Math.random());
+		  	bigVictor.x *= 1000;
+		  	bigVictor.y *= 1000;
+			bulletController.shootBullet(bigVictor, randomVictor());
+		  }
+		});	
+
+	}, 1000);
 
 });

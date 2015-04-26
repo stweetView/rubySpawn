@@ -17,6 +17,7 @@ gem 'shotgun'
 
 gem 'dotenv'
 gem 'tweetstream'
+gem 'pusher'
 
 group :test do
   gem 'shoulda-matchers'

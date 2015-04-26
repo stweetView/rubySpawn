@@ -5,6 +5,7 @@ require 'dotenv'
 require 'pg'
 require 'active_record'
 require 'logger'
+require 'pusher'
 Dotenv.load
 
 TweetStream.configure do |config|
@@ -14,6 +15,8 @@ TweetStream.configure do |config|
   config.oauth_token_secret = ENV["twitter_access_token_secret"]
   config.auth_method        = :oauth
 end
+
+Pusher.url = "http://#{ENV['pusher_key']}:#{ENV['pusher_secret']}@api.pusherapp.com/apps/#{ENV['pusher_app_id']}"
 
 TweetStream::Client.new.track('#ruby') do |status|
   # Ignore replies. Probably not relevant in your own filter app, but we want
@@ -31,9 +34,12 @@ TweetStream::Client.new.track('#ruby') do |status|
     #   'profile_image_url' => status.user.profile_image_url,
     #   'received_at' => Time.new.to_i
     # )
-    puts Tweet.all
+
+    Pusher['ruby_channel'].trigger('tweet_event', {
+      message: '#{status.text}'
+    })
+
     puts "Got tweet #{status.text}"
-    
-    tweet = Tweet.create(text: status.text, user_name: status.user.name, profile_image_url: status.user.profile_image_url)
+
   end
 end

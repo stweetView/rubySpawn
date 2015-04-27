@@ -18,28 +18,24 @@ end
 
 Pusher.url = "http://#{ENV['pusher_key']}:#{ENV['pusher_secret']}@api.pusherapp.com/apps/#{ENV['pusher_app_id']}"
 
-TweetStream::Client.new.track('#ruby') do |status|
-  # Ignore replies. Probably not relevant in your own filter app, but we want
-  # to filter out funny tweets that stand on their own, not responses.
-  if status.text !~ /^@\w+/
-    # Yes, we could just store the Status object as-is, since it's actually just a
-    # subclass of Hash. But Twitter results include lots of fields that we don't
-    # care about, so let's keep it simple and efficient for the web app.
-    # STORE.push(
-    #   'id' => status[:id],
-    #   'text' => status.text,
-    #   'username' => status.user.screen_name,
-    #   'userid' => status.user[:id],
-    #   'name' => status.user.name,
-    #   'profile_image_url' => status.user.profile_image_url,
-    #   'received_at' => Time.new.to_i
-    # )
+def push_event(event, status)
+  Pusher['rubySpawn_channel'].trigger(event, {
+    message: '#{status.text}'
+  })
 
-    Pusher['ruby_channel'].trigger('tweet_event', {
-      message: '#{status.text}'
-    })
-
-    puts "Got tweet #{status.text}"
-
-  end
+  puts "Pushed event for #{status.text}"
 end
+
+TweetStream::Client.new.track('#ruby', '#deathstar') do |status|
+
+  if(status.text.downcase!.include?("ruby"))
+    push_event('ruby_event', status)
+  end
+
+  if(status.text.downcase!.include?("deathstar"))
+    push_event('deathstar_event', status)
+  end
+
+end
+
+

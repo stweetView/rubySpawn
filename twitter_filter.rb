@@ -6,6 +6,7 @@ require 'pg'
 require 'active_record'
 require 'logger'
 require 'pusher'
+require 'json'
 Dotenv.load
 
 TweetStream.configure do |config|
@@ -18,22 +19,12 @@ end
 
 Pusher.url = "http://#{ENV['pusher_key']}:#{ENV['pusher_secret']}@api.pusherapp.com/apps/#{ENV['pusher_app_id']}"
 
-def push_event(event, status)
-  Pusher['rubySpawn_channel'].trigger(event, {
-    message: '#{status.text}'
-  })
+TweetStream::Client.new.track('lol') do |status|
 
-  puts "Pushed event for #{status.text}"
-end
-
-TweetStream::Client.new.track('#ruby', '#deathstar') do |status|
-
-  if(status.text.downcase!.include?("ruby"))
-    push_event('ruby_event', status)
-  end
-
-  if(status.text.downcase!.include?("deathstar"))
-    push_event('deathstar_event', status)
+  if !status.geo.nil?
+    Pusher['tweets_channel'].trigger('tweet_event', status.geo)
+    p status.geo.coords
+    p status.text
   end
 
 end

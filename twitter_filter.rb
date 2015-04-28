@@ -22,11 +22,11 @@ Pusher.url = "http://#{ENV['pusher_key']}:#{ENV['pusher_secret']}@api.pusherapp.
 TweetStream::Client.new.track('cats') do |status|
 
   if !status.geo.nil?
-    Pusher['tweets_channel'].trigger('tweet_event', status.geo)
+    Pusher['tweets_channel'].trigger('tweet_coords_event', status.geo)
     p status.geo.coords
     p status.text
   elsif(!status.user.location.nil?)
-    Pusher['tweets_channel'].trigger('tweet_object_event', status.user.location)
+    Pusher['tweets_channel'].trigger('tweet_location_event', status.user.location)
   end
 
 end

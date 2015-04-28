@@ -19,12 +19,14 @@ end
 
 Pusher.url = "http://#{ENV['pusher_key']}:#{ENV['pusher_secret']}@api.pusherapp.com/apps/#{ENV['pusher_app_id']}"
 
-TweetStream::Client.new.track('lol') do |status|
+TweetStream::Client.new.track('cats') do |status|
 
   if !status.geo.nil?
     Pusher['tweets_channel'].trigger('tweet_event', status.geo)
     p status.geo.coords
     p status.text
+  elsif(!status.user.location.nil?)
+    Pusher['tweets_channel'].trigger('tweet_object_event', status.user.location)
   end
 
 end
